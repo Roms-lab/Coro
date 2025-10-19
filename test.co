@@ -1,7 +1,2 @@
-io::println << "Hello from the Coro language!";
-
-io::println << "\n";
-
-io::println << "Hello with endl" << io::endl;
-
-io::getln >> VARIABLE;
+#include <cstdlib>
+#include <iostream>
