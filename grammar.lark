@@ -1,13 +1,23 @@
-start: (io_print_statement)*
+start: statement*
 
+statement: io_print_statement | io_readln_statement | io_newline | io_import_clib
+
+// coro import C-library
+io_import_clib: "#" "include" "<coroclib>"
+
+// coro print statement
 io_print_statement: "io" "::" "println" "<<" ESCAPED_STRING (io_endl)? ";"
 
+// coro endl
 io_endl: "io" "::" "endl"
 
+// coro newline character
 io_newline: "\n"
 
+// coro input/readline
 io_readln_statement: "io" "::" "readln" ">>" CNAME ";"
 
 %import common.ESCAPED_STRING
+%import common.CNAME
 %import common.WS
 %ignore WS
