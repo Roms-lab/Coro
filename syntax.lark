@@ -1,0 +1,34 @@
+// syntax.lark
+
+start: statement*
+
+statement: io_print_statement | io_readln_statement | io_import_clib | io_import_time | io_import_iostream
+
+// coro import C-library
+io_import_clib: "#" "include" "<cstdlib>"
+
+// coro import Time-library (will import chrono and thread.)
+io_import_time: "#" "include" "<time>"
+
+// coro import iostream
+io_import_iostream: "#" "include" "<iostream>"
+
+// coro print statement
+io_print_statement: "io" "::" "println" ( "<<" print_item )+ ";"
+
+// coro endl
+io_endl: "io" "::" "endl"
+
+// coro newline character
+io_newline: "\n"
+
+// coro input/readline
+io_readln_statement: "io" "::" "readln" ">>" CNAME ";"
+
+// Define print_item rule
+print_item: ESCAPED_STRING | CNAME | io_endl
+
+%import common.ESCAPED_STRING
+%import common.CNAME
+%import common.WS
+%ignore WS
