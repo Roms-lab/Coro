@@ -1,0 +1,13 @@
+start: (io_print_statement)*
+
+io_print_statement: "io" "::" "println" "<<" ESCAPED_STRING (io_endl)? ";"
+
+io_endl: "io" "::" "endl"
+
+io_newline: "\n"
+
+io_readln_statement: "io" "::" "readln" ">>" CNAME ";"
+
+%import common.ESCAPED_STRING
+%import common.WS
+%ignore WS
