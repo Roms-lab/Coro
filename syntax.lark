@@ -1,8 +1,14 @@
-// syntax.lark
+// A Coro language parser grammar
 
 start: statement*
 
-statement: io_print_statement | io_readln_statement | io_import_clib | io_import_time | io_import_iostream
+// A statement can be one of several types
+statement: io_print_statement
+         | io_readln_statement
+         | io_import_clib
+         | io_import_time
+         | io_import_iostream
+         | io_wait_seconds
 
 // coro import C-library
 io_import_clib: "#" "include" "<cstdlib>"
@@ -19,16 +25,17 @@ io_print_statement: "io" "::" "println" ( "<<" print_item )+ ";"
 // coro endl
 io_endl: "io" "::" "endl"
 
-// coro newline character
-io_newline: "\n"
-
 // coro input/readline
 io_readln_statement: "io" "::" "readln" ">>" CNAME ";"
 
+// coro wait time
+io_wait_seconds: "io" "::" "WaitSeconds" "(" NUMBER ")" ";"
+
 // Define print_item rule
-print_item: ESCAPED_STRING | CNAME | io_endl
+print_item: ESCAPED_STRING | CNAME | io_endl | NUMBER
 
 %import common.ESCAPED_STRING
 %import common.CNAME
+%import common.NUMBER
 %import common.WS
 %ignore WS
