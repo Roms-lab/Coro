@@ -47,6 +47,10 @@ int main() {{
         self.cpp_includes.add("#include <thread>")
         return ""
 
+    def io_import_string(self):
+        self.cpp_includes.add("#include <string>")
+        return ""
+
     def io_print_statement(self, *items):
         output_parts = [str(item) for item in items]
         cpp_expression = " << ".join(output_parts)
@@ -68,6 +72,25 @@ int main() {{
         self.cpp_includes.add("#include <thread>")
         return f"    std::this_thread::sleep_for(std::chrono::seconds({wait_time}));"
 
+    def int_varible(self, int_name, eq_sign, int_number):
+        return f"    int {int_name} = {int_number};"
+
+    def float_variable(self, float_name, eq_sign, float_number):
+        return f"    float {float_name} = {float_number};"
+
+    def double_variable(self, double_name, eq_sign, double_number):
+        return f"    double {double_name} = {double_number};"
+    
+    def bool_variable(self, bool_name, eq_sign, bool_value):
+        return f"    bool {bool_name} = {bool_value};"
+
+    def char_variable(self, char_name, eq_sign, char_value):
+        return f"    char {char_name} = {char_value};"
+    
+    def string_variable(self, string_name, eq_sign, string_value):
+        self.cpp_includes.add("#include <string>")
+        return f"    std::string {string_name} = {string_value};"
+
     def ESCAPED_STRING(self, s):
         return s.value
         
@@ -76,6 +99,16 @@ int main() {{
 
     def NUMBER(self, n):
         return n.value
+    
+    def FLOAT(self, f):
+        return f.value
+
+    def BOOL(self, b):
+        return b.value
+    
+    def CHAR(self, c):
+        return c.value
+
 
 try:
     with open(coro_file, "r") as f:
@@ -83,8 +116,8 @@ try:
 except FileNotFoundError:
     print(f"Error: '{coro_file}' not found. Please create a .co file and try re-compiling.")
     exit(1)
-except Exception:
-    print("Unknown Error During Compilation.")
+except Exception as e:
+    print(f"An error occurred: {e}")
     exit(1)
 
 if __name__ == '__main__':
