@@ -8,7 +8,14 @@ statement: io_print_statement
          | io_import_clib
          | io_import_time
          | io_import_iostream
+         | io_import_string
          | io_wait_seconds
+         | int_varible
+         | float_variable
+         | double_variable
+         | bool_variable
+         | char_variable
+         | string_variable
 
 // coro import C-library
 io_import_clib: "#" "include" "<cstdlib>"
@@ -18,6 +25,9 @@ io_import_time: "#" "include" "<time>"
 
 // coro import iostream
 io_import_iostream: "#" "include" "<iostream>"
+
+// coro import string
+io_import_string: "#" "include" "<string>"
 
 // coro print statement
 io_print_statement: "io" "::" "println" ( "<<" print_item )+ ";"
@@ -32,7 +42,22 @@ io_readln_statement: "io" "::" "readln" ">>" CNAME ";"
 io_wait_seconds: "io" "::" "WaitSeconds" "(" NUMBER ")" ";"
 
 // Define print_item rule
-print_item: ESCAPED_STRING | CNAME | io_endl | NUMBER
+print_item: ESCAPED_STRING | CNAME | io_endl | NUMBER | FLOAT | BOOL | CHAR | STRING
+
+// coro variables
+int_varible: "int" CNAME EQ_SIGN NUMBER ";"
+float_variable: "float" CNAME EQ_SIGN FLOAT ";"
+double_variable: "double" CNAME EQ_SIGN FLOAT ";"
+bool_variable: "bool" CNAME EQ_SIGN BOOL ";"
+char_variable: "char" CNAME EQ_SIGN CHAR ";"
+string_variable: "string" CNAME EQ_SIGN ESCAPED_STRING ";"
+
+// Tokens
+EQ_SIGN: "="
+FLOAT: /\d+\.\d+/
+BOOL: "true" | "false"
+CHAR: /'.'/
+STRING: /"(?:[^"\\\\]|\\\\.)*"/
 
 %import common.ESCAPED_STRING
 %import common.CNAME
