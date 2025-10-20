@@ -1,4 +1,4 @@
-from lark import Lark, Transformer, Tree, Token
+from lark import Lark, Transformer, Tree, Token, v_args
 
 coro_file = "test.co"
 file_name_w = "Coro_Output.cpp"
@@ -12,12 +12,13 @@ except FileNotFoundError:
     print("Error: 'syntax.lark' not found. Please create the file with the grammar definition.")
     exit(1)
 
+@v_args(inline=True)
 class CoroToCpp(Transformer):
     def __init__(self):
         super().__init__()
         self.cpp_includes = set()
 
-    def start(self, statements):
+    def start(self, *statements):
         main_body = "\n".join(statements)
         includes_str = "\n".join(sorted(list(self.cpp_includes)))
         
@@ -29,45 +30,40 @@ int main() {{
     return 0;
 }}
 """
+    
+    def statement(self, child):
+        return child
 
-    def statement(self, children):
-        # A statement rule always has a single child (e.g., a print statement).
-        # We must return that single child, not the list containing it.
-        return children[0]
-
-    def io_import_iostream(self, _):
+    def io_import_iostream(self):
         self.cpp_includes.add("#include <iostream>")
         return ""
 
-    def io_import_clib(self, _):
+    def io_import_clib(self):
         self.cpp_includes.add("#include <cstdlib>")
         return ""
     
-    def io_import_time(self, _):
+    def io_import_time(self):
         self.cpp_includes.add("#include <chrono>")
         self.cpp_includes.add("#include <thread>")
         return ""
 
-    def io_print_statement(self, items):
+    def io_print_statement(self, *items):
         output_parts = [str(item) for item in items]
         cpp_expression = " << ".join(output_parts)
         
         return f"    std::cout << {cpp_expression};"
 
-    def print_item(self, children):
-        # The print_item rule has a single child (e.g., ESCAPED_STRING, CNAME, or io_endl).
-        # We must return that single child.
-        return children[0]
+    def print_item(self, child):
+        return child
     
-    def io_endl(self, _):
+    def io_endl(self):
         return "std::endl"
     
-    def io_readln_statement(self, children):
-        variable_name = children[0].value
-        return f"    std::string {variable_name}; std::cin >> {variable_name};"
+    def io_readln_statement(self, var_name):
+        self.cpp_includes.add("#include <string>")
+        return f"    std::string {var_name}; std::cin >> {var_name};"
 
-    def io_wait_seconds(self, children):
-        wait_time = children[0].value
+    def io_wait_seconds(self, wait_time):
         self.cpp_includes.add("#include <chrono>")
         self.cpp_includes.add("#include <thread>")
         return f"    std::this_thread::sleep_for(std::chrono::seconds({wait_time}));"
@@ -78,8 +74,8 @@ int main() {{
     def CNAME(self, c):
         return c.value
 
-    def io_newline(self, _):
-        return ""
+    def NUMBER(self, n):
+        return n.value
 
 try:
     with open(coro_file, "r") as f:
@@ -95,26 +91,21 @@ if __name__ == '__main__':
     parser = Lark(coro_syntax, parser='lalr', start='start')
 
     try:
-        # Parse the code
         tree = parser.parse(coro_code)
-        
-        # Transform the parse tree into C++ code
         cpp_code_output = CoroToCpp().transform(tree)
         
-        # Print the generated C++ code
         print("--- Generated C++ Code ---")
         print(cpp_code_output)
     except Exception as e:
         print(f"An error occurred: {e}")
         cpp_code_output = ""
 
-# Set content to write to cpp code output
-content_to_write = cpp_code_output
+    content_to_write = cpp_code_output
 
-with open(file_name_w, 'w') as file_object:
-    file_object.write(content_to_write)
+    with open(file_name_w, 'w') as file_object:
+        file_object.write(content_to_write)
 
-if cpp_code_output:
-    print(f"\nContent written to '{file_name_w}'.")
-else:
-    print(f"\nNo content written to '{file_name_w}' due to an error.")
+    if cpp_code_output:
+        print(f"\nContent written to '{file_name_w}'.")
+    else:
+        print(f"\nNo content written to '{file_name_w}' due to an error.")
