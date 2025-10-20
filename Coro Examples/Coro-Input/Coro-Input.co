@@ -1,0 +1,2 @@
+int x = 5;
+io::readln >> x;

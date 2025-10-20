@@ -1,0 +1,11 @@
+int Integer = 5;
+
+float Float = 1.23;
+
+double Double = 2.333;
+
+bool Bool = true;
+
+char Character = 'h';
+
+string String = "Hello!";
