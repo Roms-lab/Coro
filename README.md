@@ -13,6 +13,7 @@ At its core, Coro is built on a simple philosophy: **give the developer maximum 
 
 *   **Zero-Cost Abstractions:** Write high-level, expressive code that compiles to the same efficient machine code as hand-optimized C++.
 *   **Bare-Metal Performance:** As a low-level language, Coro provides direct access to hardware resources, making it perfect for system programming, embedded systems, and performance-critical applications.
+*   **Pre-Programmed Micro-Optimizations** Programmed into the core of Coro we implemented micro-optimizations for faster code.
 *   **Effortless C++ Interop:** Integrate seamlessly with existing C++ codebases and libraries, allowing you to leverage the vast C++ ecosystem.
 
 ## ✨ Features
