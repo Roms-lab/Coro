@@ -34,7 +34,7 @@ To get started with Coro, you'll need a C++ compiler (like GCC or Clang) install
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/Roms-labe/Coro.git
+    git clone https://github.com/Roms-lab/Coro.git
     cd Coro
     ```
 2.  **Build the compiler:**
